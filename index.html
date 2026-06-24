@@ -314,6 +314,22 @@
         </div>
     </div>
 </section>
+<!-- Gallery Modal -->
+<div id="gallery-modal" class="gmodal" role="dialog" aria-modal="true">
+    <div class="gmodal-bg"></div>
+    <div class="gmodal-overlay"></div>
+    <button class="gmodal-close" id="gmodal-close" aria-label="Close">&times;</button>
+    <button class="gmodal-nav gmodal-prev" id="gmodal-prev" aria-label="Previous">&#10094;</button>
+    <button class="gmodal-nav gmodal-next" id="gmodal-next" aria-label="Next">&#10095;</button>
+    <div class="gmodal-frame">
+        <div class="gmodal-stars-tl">&#9733;&#9733;&#9733;</div>
+        <div class="gmodal-stars-tr">&#9733;&#9733;&#9733;</div>
+        <img id="gmodal-img" src="" alt="">
+        <div class="gmodal-caption" id="gmodal-caption"></div>
+        <div class="gmodal-counter" id="gmodal-counter"></div>
+    </div>
+</div>
+
 <button class="scroll-to-top">
     <i class="fas fa-arrow-up"></i>
 </button>
@@ -468,6 +484,70 @@ document.addEventListener('DOMContentLoaded', function() {
     })();
     </script>
 
+    <script>
+    /* ── Gallery Modal ── */
+    (function () {
+      var modal   = document.getElementById('gallery-modal');
+      var mImg    = document.getElementById('gmodal-img');
+      var mCap    = document.getElementById('gmodal-caption');
+      var mCount  = document.getElementById('gmodal-counter');
+      var btnClose= document.getElementById('gmodal-close');
+      var btnPrev = document.getElementById('gmodal-prev');
+      var btnNext = document.getElementById('gmodal-next');
+
+      var images  = [];
+      var current = 0;
+
+      function buildList() {
+        images = Array.from(document.querySelectorAll('.gallery-item img'));
+      }
+
+      function showModal(index) {
+        current = ((index % images.length) + images.length) % images.length;
+        var img = images[current];
+        mImg.src = img.src;
+        mImg.alt = img.alt;
+        mCap.textContent = img.alt.replace('MAGA Gallery ', '$AIB — ').replace('AIB Gallery ', '$AIB — ');
+        mCount.textContent = (current + 1) + ' / ' + images.length;
+        modal.classList.remove('open');
+        void modal.offsetWidth;
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        buildList();
+
+        images.forEach(function (img, idx) {
+          img.style.cursor = 'pointer';
+          img.addEventListener('click', function () { showModal(idx); });
+        });
+
+        btnClose.addEventListener('click', closeModal);
+        btnPrev.addEventListener('click', function () { showModal(current - 1); });
+        btnNext.addEventListener('click', function () { showModal(current + 1); });
+
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal || e.target.classList.contains('gmodal-overlay') || e.target.classList.contains('gmodal-bg')) {
+            closeModal();
+          }
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (!modal.classList.contains('open')) return;
+          if (e.key === 'ArrowRight') showModal(current + 1);
+          if (e.key === 'ArrowLeft')  showModal(current - 1);
+          if (e.key === 'Escape')     closeModal();
+        });
+      });
+    })();
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -475,6 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
+
 
 
 
